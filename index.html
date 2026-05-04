@@ -1,0 +1,1328 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Resume Adapter Bot</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #121b2f;
+      --panel-2: #18243f;
+      --text: #e7edf9;
+      --muted: #9bb0d1;
+      --brand: #4f8cff;
+      --ok: #21c788;
+      --warn: #ffb648;
+      --danger: #ff6b6b;
+      --border: #263659;
+      --badge: #1b2c4a;
+      --shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at 10% 10%, #152342, var(--bg) 50%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .container {
+      width: min(1200px, 92vw);
+      margin: 26px auto 40px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 10px;
+      z-index: 10;
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+
+    .lang-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(10, 18, 34, 0.86);
+      backdrop-filter: blur(8px);
+    }
+
+    .lang-btn {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      min-width: 56px;
+    }
+
+    .lang-btn.active {
+      background: var(--brand);
+      border-color: var(--brand);
+      color: #fff;
+    }
+
+    .card {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+
+    h1, h2, h3 { margin: 0 0 8px; }
+    h1 { font-size: 28px; }
+    h2 { font-size: 20px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    h3 { font-size: 16px; color: #c9d8f2; }
+
+    .subtitle {
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .badge {
+      background: var(--badge);
+      border: 1px solid var(--border);
+      color: #d7e4ff;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .workflow-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .step-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #0f1a31;
+      padding: 10px;
+      min-height: 78px;
+    }
+
+    .step-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #d8e5ff;
+    }
+
+    .step-state {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      color: #c5d6f8;
+      background: #172540;
+    }
+
+    .step-card.done .step-state {
+      background: rgba(33, 199, 136, 0.15);
+      border-color: rgba(33, 199, 136, 0.5);
+      color: #7af8c5;
+    }
+
+    .step-card.active .step-state {
+      background: rgba(79, 140, 255, 0.2);
+      border-color: rgba(79, 140, 255, 0.5);
+      color: #a8c7ff;
+    }
+
+    .step-card.locked .step-state {
+      background: rgba(255, 182, 72, 0.14);
+      border-color: rgba(255, 182, 72, 0.45);
+      color: #ffd393;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .col-3 { grid-column: span 3; }
+    .col-4 { grid-column: span 4; }
+    .col-6 { grid-column: span 6; }
+    .col-12 { grid-column: span 12; }
+
+    label {
+      font-size: 13px;
+      color: #c8d6f0;
+      font-weight: 600;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      background: #0e172a;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+
+    textarea { min-height: 130px; resize: vertical; }
+
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .btn {
+      border: 1px solid var(--border);
+      background: #172742;
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .btn.primary {
+      background: var(--brand);
+      border-color: var(--brand);
+      color: white;
+    }
+
+    .btn.success {
+      background: var(--ok);
+      border-color: var(--ok);
+      color: #082115;
+    }
+
+    .btn.warn {
+      background: var(--warn);
+      border-color: var(--warn);
+      color: #2a1700;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .mini-note {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
+    .ats-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+      color: #bfd0f3;
+      font-size: 12px;
+    }
+
+    .list {
+      margin: 6px 0 0;
+      padding-left: 18px;
+      color: #d9e6ff;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-left: 8px;
+      border: 1px solid transparent;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .status.ok { background: rgba(33, 199, 136, 0.15); color: #76f5c1; border-color: rgba(33, 199, 136, 0.4); }
+    .status.warn { background: rgba(255, 182, 72, 0.18); color: #ffd48f; border-color: rgba(255, 182, 72, 0.4); }
+    .status.danger { background: rgba(255, 107, 107, 0.15); color: #ff9f9f; border-color: rgba(255, 107, 107, 0.45); }
+
+    .score-wrap {
+      margin-top: 8px;
+      background: #0e172a;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      height: 18px;
+      overflow: hidden;
+    }
+
+    .score-bar {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, #3b82f6 0%, #7c3aed 48%, #10b981 100%);
+      transition: width 0.35s ease;
+    }
+
+    .score-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+      color: #c9d9f7;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .locked {
+      border: 1px dashed #7b8bb0;
+      background: linear-gradient(180deg, #121f39, #111a2f);
+      border-radius: 12px;
+      padding: 14px;
+      color: #c6d5f0;
+    }
+
+    .lock-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .lock-icon {
+      font-size: 20px;
+    }
+
+    .risk-grid {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .risk-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      background: #13233f;
+      color: #d9e7ff;
+      font-size: 13px;
+    }
+
+    .risk-card.high {
+      border-color: rgba(255, 107, 107, 0.5);
+      background: rgba(255, 107, 107, 0.1);
+      color: #ffc8c8;
+    }
+
+    .prompt-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .prompt-side {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      background: #0f1a31;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .prompt-main textarea {
+      min-height: 230px;
+      margin-top: 0;
+    }
+
+    .warning {
+      border-left: 4px solid var(--warn);
+      background: rgba(255, 182, 72, 0.09);
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-top: 10px;
+      color: #ffe2b1;
+      font-size: 13px;
+    }
+
+    .danger-note {
+      border-left: 4px solid var(--danger);
+      background: rgba(255, 107, 107, 0.11);
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-top: 10px;
+      color: #ffc2c2;
+      font-size: 13px;
+    }
+
+    .output {
+      background: #0e172a;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-top: 8px;
+      white-space: pre-wrap;
+      color: #dbe7ff;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 980px) {
+      .col-3, .col-4, .col-6 { grid-column: span 6; }
+      .workflow-steps { grid-template-columns: repeat(2, 1fr); }
+      .risk-grid { grid-template-columns: repeat(2, 1fr); }
+      .prompt-layout { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .container { width: 94vw; }
+      .col-3, .col-4, .col-6, .col-12 { grid-column: span 12; }
+      h1 { font-size: 24px; }
+      .btn { width: 100%; }
+      .lang-wrap { width: 100%; justify-content: center; }
+      .topbar { top: 6px; }
+      .workflow-steps { grid-template-columns: 1fr; }
+      .risk-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div class="lang-wrap">
+        <button id="langEn" class="lang-btn active">EN</button>
+        <button id="langRu" class="lang-btn">RU</button>
+      </div>
+    </div>
+
+    <header class="card">
+      <h1 data-i18n="headerTitle">AI Resume Adapter Bot</h1>
+      <p class="subtitle" data-i18n="headerSubtitle">3-stage ATS checkup and resume tailoring assistant for the German job market.</p>
+      <div class="badge-row">
+        <span class="badge" data-i18n="badgeMvp">MVP Prototype</span>
+        <span class="badge" data-i18n="badgeGermany">Germany Job Search</span>
+        <span class="badge" data-i18n="badgeApproval">Human Approval Required</span>
+        <span class="badge" data-i18n="badgeTruth">Truthful Resume Rule</span>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2 data-i18n="workflowTitle">Workflow Progress</h2>
+      <div class="workflow-steps">
+        <div id="step0" class="step-card active">
+          <div class="step-title" data-i18n="stage0Title">Stage 0: Resume Selection</div>
+          <span class="step-state" data-i18n="stepStateReady">Ready</span>
+        </div>
+        <div id="step1" class="step-card">
+          <div class="step-title" data-i18n="stage1Title">Stage 1: Checkup Only</div>
+          <span class="step-state" data-i18n="stepStatePending">Pending</span>
+        </div>
+        <div id="step15" class="step-card">
+          <div class="step-title" data-i18n="stage15Title">Stage 1.5: Hiring Manager Scan</div>
+          <span class="step-state" data-i18n="stepStatePending">Pending</span>
+        </div>
+        <div id="step2" class="step-card locked">
+          <div class="step-title" data-i18n="stage2TitleShort">Stage 2: Tailoring</div>
+          <span class="step-state" data-i18n="stepStateLocked">Locked</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="inputSectionTitle">Input Section</h2>
+      <div class="grid">
+        <div class="field col-4">
+          <label for="roleName" data-i18n="roleName">Role name</label>
+          <input id="roleName" type="text">
+        </div>
+        <div class="field col-4">
+          <label for="companyName" data-i18n="companyName">Company name</label>
+          <input id="companyName" type="text">
+        </div>
+        <div class="field col-4">
+          <label for="jobLocation" data-i18n="jobLocation">Job location</label>
+          <input id="jobLocation" type="text">
+        </div>
+
+        <div class="field col-3">
+          <label for="workMode" data-i18n="workMode">Work mode</label>
+          <select id="workMode">
+            <option value="Remote">Remote</option>
+            <option value="Hybrid">Hybrid</option>
+            <option value="On-site">On-site</option>
+            <option value="Unknown" selected>Unknown</option>
+          </select>
+        </div>
+        <div class="field col-3">
+          <label for="salary" data-i18n="salary">Target salary expectation</label>
+          <input id="salary" type="text" placeholder="EUR/year">
+        </div>
+        <div class="field col-3">
+          <label for="germanLevel" data-i18n="germanLevel">German level</label>
+          <select id="germanLevel">
+            <option value="A1">A1</option><option value="A2">A2</option><option value="B1">B1</option><option value="B2">B2</option><option value="C1">C1</option><option value="Not specified" selected>Not specified</option>
+          </select>
+        </div>
+        <div class="field col-3">
+          <label for="primaryResume" data-i18n="primaryCandidates">Primary resume candidates</label>
+          <select id="primaryResume">
+            <option>AI Engineer.pdf</option>
+            <option>System Administrator.pdf</option>
+          </select>
+        </div>
+
+        <div class="field col-12">
+          <label for="jobDescription" data-i18n="jobDescription">Job description</label>
+          <textarea id="jobDescription"></textarea>
+        </div>
+        <div class="field col-12">
+          <label for="currentResume" data-i18n="currentResume">Current resume</label>
+          <textarea id="currentResume"></textarea>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <label style="display:flex;align-items:center;gap:8px;">
+          <input id="allowSecondary" type="checkbox">
+          <span data-i18n="allowSecondary">Allow limited enhancement from secondary resume</span>
+        </label>
+      </div>
+      <div class="action-row">
+        <button id="loadDemoBtn" class="btn" data-i18n="loadDemo">Load Demo Data</button>
+        <button id="clearBtn" class="btn" data-i18n="clear">Clear</button>
+        <button id="startStage0Btn" class="btn primary" data-i18n="startStage0">Start Stage 0</button>
+      </div>
+      <div class="mini-note" data-i18n="truthRuleNote">Human approval is required before tailoring. Do not invent experience or skills that cannot be defended in an interview.</div>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="stage0Title">Stage 0: Resume Selection</h2>
+      <div id="stage0Output" class="output" data-i18n="stage0Empty">No analysis yet.</div>
+      <div class="action-row">
+        <button id="runStage1Btn" class="btn primary" disabled data-i18n="runStage1">Run Stage 1 Checkup</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="stage1Title">Stage 1: Checkup Only</h2>
+      <div id="stage1Output" class="output" data-i18n="stage1Empty">Stage 1 output will appear here.</div>
+      <div class="pill-row" id="stage1Badges"></div>
+      <div class="score-head">
+        <span data-i18n="atsScoreLabel">ATS Match Score</span>
+        <span id="stage1ScoreValue">0/100</span>
+      </div>
+      <div class="score-wrap"><div id="stage1ScoreBar" class="score-bar"></div></div>
+      <div class="ats-legend" id="atsLegend"></div>
+      <div class="action-row">
+        <button id="runStage15Btn" class="btn primary" disabled data-i18n="runStage15">Run Stage 1.5 Hiring Manager Scan</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="stage15Title">Stage 1.5: Hiring Manager Scan</h2>
+      <div id="stage15Output" class="output" data-i18n="stage15Empty">Stage 1.5 output will appear here.</div>
+      <div id="riskFlags" class="risk-grid"></div>
+      <div class="action-row">
+        <button id="approveStage2Btn" class="btn success" disabled data-i18n="approveStage2">Approve Stage 2</button>
+        <button id="skipTailoringBtn" class="btn warn" disabled data-i18n="skipTailoring">Skip Tailoring</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="stage2Title">Stage 2: Tailoring (Approval Required)</h2>
+      <div id="stage2Locked" class="locked">
+        <div class="lock-row">
+          <strong data-i18n="stage2LockedTitle">Stage 2 is locked.</strong>
+          <span class="lock-icon">🔒</span>
+        </div>
+        <div data-i18n="stage2LockedText">Human approval is required before tailoring. Do not invent experience. Do not claim skills that cannot be defended in an interview.</div>
+      </div>
+      <div id="stage2Output" class="output" style="display:none;"></div>
+      <div id="stage2Reminder" class="danger-note" style="display:none;" data-i18n="stage2Reminder">Review before sending. Do not claim skills you cannot defend in an interview.</div>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="promptBuilderTitle">Resume ATS Prompt Builder</h2>
+      <div class="prompt-layout">
+        <div class="prompt-side">
+          <button id="genStage1PromptBtn" class="btn" data-i18n="genStage1Prompt">Generate Stage 1 Prompt</button>
+          <button id="genStage2PromptBtn" class="btn" data-i18n="genStage2Prompt">Generate Stage 2 Prompt After Approval</button>
+          <button id="copyPromptBtn" class="btn primary" data-i18n="copyPrompt">Copy Prompt</button>
+          <div id="copyStatus" class="mini-note"></div>
+        </div>
+        <div class="prompt-main">
+          <textarea id="promptOutput"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer" data-i18n="footerNote">
+      This MVP is a local prototype. Future versions can connect to resume files, LLM APIs, Telegram, email workflows, and job board integrations.
+    </footer>
+  </div>
+
+  <script>
+    const state = {
+      language: "en",
+      selectedPrimaryResume: "Not specified",
+      allowSecondary: false,
+      stage0Done: false,
+      stage1Done: false,
+      stage15Done: false,
+      stage2Approved: false,
+      lastAtsScore: 0,
+      lastEstimatedAfterFixes: 0,
+      lastFlags: []
+    };
+
+    const i18n = {
+      en: {
+        headerTitle: "AI Resume Adapter Bot",
+        headerSubtitle: "3-stage ATS checkup and resume tailoring assistant for the German job market.",
+        badgeMvp: "MVP Prototype",
+        badgeGermany: "Germany Job Search",
+        badgeApproval: "Human Approval Required",
+        badgeTruth: "Truthful Resume Rule",
+        workflowTitle: "Workflow Progress",
+        stepStateReady: "Ready",
+        stepStatePending: "Pending",
+        stepStateLocked: "Locked",
+        stepStateDone: "Done",
+        stepStateApproved: "Approved",
+        wmRemote: "Remote",
+        wmHybrid: "Hybrid",
+        wmOnSite: "On-site",
+        wmUnknown: "Unknown",
+        notSpecified: "Not specified",
+        atsLegendGood: "80+ strong",
+        atsLegendMedium: "62-79 worth trying",
+        atsLegendLow: "below 62 low chance",
+        msgNeedJd: "Please paste job description first.",
+        msgNeedBothTexts: "Please provide both job description and current resume.",
+        msgNoFlags: "No immediate red flags",
+        msgTailoringSkipped: "Tailoring skipped. Stage 2 remains locked until explicit approval.",
+        msgNeedStage2Approval: "Stage 2 is not approved yet. Approve Stage 2 first, then generate the Stage 2 prompt.",
+        msgPromptCopied: "Prompt copied.",
+        msgCopyFailed: "Copy failed. Please copy manually.",
+        inputSectionTitle: "Input Section",
+        roleName: "Role name",
+        companyName: "Company name",
+        jobLocation: "Job location",
+        workMode: "Work mode",
+        salary: "Target salary expectation",
+        germanLevel: "German level",
+        primaryCandidates: "Primary resume candidates",
+        jobDescription: "Job description",
+        currentResume: "Current resume",
+        allowSecondary: "Allow limited enhancement from secondary resume",
+        loadDemo: "Load Demo Data",
+        clear: "Clear",
+        startStage0: "Start Stage 0",
+        truthRuleNote: "Human approval is required before tailoring. Do not invent experience or skills that cannot be defended in an interview.",
+        stage0Title: "Stage 0: Resume Selection",
+        stage0Empty: "No analysis yet.",
+        runStage1: "Run Stage 1 Checkup",
+        stage1Title: "Stage 1: Checkup Only",
+        stage1Empty: "Stage 1 output will appear here.",
+        runStage15: "Run Stage 1.5 Hiring Manager Scan",
+        stage15Title: "Stage 1.5: Hiring Manager Scan",
+        stage15Empty: "Stage 1.5 output will appear here.",
+        stage2TitleShort: "Stage 2: Tailoring",
+        approveStage2: "Approve Stage 2",
+        skipTailoring: "Skip Tailoring",
+        stage2Title: "Stage 2: Tailoring (Approval Required)",
+        stage2LockedTitle: "Stage 2 is locked.",
+        stage2LockedText: "Human approval is required before tailoring. Do not invent experience. Do not claim skills that cannot be defended in an interview.",
+        stage2Reminder: "Review before sending. Do not claim skills you cannot defend in an interview.",
+        promptBuilderTitle: "Resume ATS Prompt Builder",
+        genStage1Prompt: "Generate Stage 1 Prompt",
+        genStage2Prompt: "Generate Stage 2 Prompt After Approval",
+        copyPrompt: "Copy Prompt",
+        atsScoreLabel: "ATS Match Score",
+        footerNote: "This MVP is a local prototype. Future versions can connect to resume files, LLM APIs, Telegram, email workflows, and job board integrations."
+      },
+      ru: {
+        headerTitle: "AI Resume Adapter Bot",
+        headerSubtitle: "Ассистент 3-этапной ATS-проверки и адаптации резюме для рынка труда Германии.",
+        badgeMvp: "MVP прототип",
+        badgeGermany: "Поиск работы в Германии",
+        badgeApproval: "Требуется одобрение человека",
+        badgeTruth: "Правило правдивого резюме",
+        workflowTitle: "Прогресс этапов",
+        stepStateReady: "Готово",
+        stepStatePending: "Ожидает",
+        stepStateLocked: "Заблокировано",
+        stepStateDone: "Готово",
+        stepStateApproved: "Одобрено",
+        wmRemote: "Удаленно",
+        wmHybrid: "Гибрид",
+        wmOnSite: "Офис",
+        wmUnknown: "Неизвестно",
+        notSpecified: "Не указано",
+        atsLegendGood: "80+ высокий шанс",
+        atsLegendMedium: "62-79 стоит попробовать",
+        atsLegendLow: "ниже 62 низкий шанс",
+        msgNeedJd: "Сначала вставьте описание вакансии.",
+        msgNeedBothTexts: "Укажите и описание вакансии, и текущее резюме.",
+        msgNoFlags: "Срочных красных флагов не обнаружено",
+        msgTailoringSkipped: "Адаптация пропущена. Этап 2 остается заблокированным до явного одобрения.",
+        msgNeedStage2Approval: "Этап 2 еще не одобрен. Сначала одобрьте Этап 2, затем генерируйте промпт Этапа 2.",
+        msgPromptCopied: "Промпт скопирован.",
+        msgCopyFailed: "Не удалось скопировать. Скопируйте вручную.",
+        inputSectionTitle: "Раздел ввода",
+        roleName: "Название роли",
+        companyName: "Название компании",
+        jobLocation: "Локация вакансии",
+        workMode: "Формат работы",
+        salary: "Ожидание по зарплате",
+        germanLevel: "Уровень немецкого",
+        primaryCandidates: "Кандидаты основного резюме",
+        jobDescription: "Описание вакансии",
+        currentResume: "Текущее резюме",
+        allowSecondary: "Разрешить ограниченное усиление из второго резюме",
+        loadDemo: "Загрузить демо-данные",
+        clear: "Очистить",
+        startStage0: "Запустить Этап 0",
+        truthRuleNote: "Перед адаптацией требуется одобрение человека. Не выдумывайте опыт или навыки, которые нельзя защитить на интервью.",
+        stage0Title: "Этап 0: Выбор резюме",
+        stage0Empty: "Анализ еще не запускался.",
+        runStage1: "Запустить Этап 1 Проверка",
+        stage1Title: "Этап 1: Только проверка",
+        stage1Empty: "Здесь появится результат Этапа 1.",
+        runStage15: "Запустить Этап 1.5 Скан Hiring Manager",
+        stage15Title: "Этап 1.5: Скан Hiring Manager",
+        stage15Empty: "Здесь появится результат Этапа 1.5.",
+        stage2TitleShort: "Этап 2: Адаптация",
+        approveStage2: "Одобрить Этап 2",
+        skipTailoring: "Пропустить адаптацию",
+        stage2Title: "Этап 2: Адаптация (Только после одобрения)",
+        stage2LockedTitle: "Этап 2 заблокирован.",
+        stage2LockedText: "Перед адаптацией требуется одобрение человека. Не выдумывайте опыт. Не заявляйте навыки, которые нельзя защитить на интервью.",
+        stage2Reminder: "Проверьте перед отправкой. Не заявляйте навыки, которые не сможете защитить на интервью.",
+        promptBuilderTitle: "Конструктор ATS-промпта для резюме",
+        genStage1Prompt: "Сгенерировать промпт Этапа 1",
+        genStage2Prompt: "Сгенерировать промпт Этапа 2 после одобрения",
+        copyPrompt: "Скопировать промпт",
+        atsScoreLabel: "ATS-оценка",
+        footerNote: "Этот MVP — локальный прототип. В будущем можно подключить файлы резюме, LLM API, Telegram, email-процессы и интеграции с job board."
+      }
+    };
+
+    const atsGroups = {
+      Cloud: ["cloud", "iaas", "private cloud", "public cloud"],
+      Infrastructure: ["infrastructure", "platform engineering", "datacenter"],
+      "System Administration": ["system administrator", "sysadmin", "administration", "windows admin", "linux admin"],
+      "Microsoft 365": ["microsoft 365", "office 365", "m365"],
+      Azure: ["azure", "azure ad"],
+      AWS: ["aws", "amazon web services"],
+      "Windows Server": ["windows server"],
+      "Active Directory": ["active directory", "ad ds"],
+      "Entra ID": ["entra id", "azure entra", "identity"],
+      Intune: ["intune", "endpoint manager"],
+      Security: ["security", "siem", "soc", "iam", "hardening", "incident response"],
+      Networking: ["network", "routing", "switching", "firewall", "tcp/ip"],
+      VPN: ["vpn", "remote access"],
+      Monitoring: ["monitoring", "observability", "zabbix", "prometheus", "grafana", "alerting"],
+      Linux: ["linux", "ubuntu", "rhel", "debian"],
+      VMware: ["vmware", "vsphere", "esxi"],
+      "Customer Support": ["support", "service desk", "ticket", "sla"],
+      "IT Operations": ["it operations", "operations", "runbooks", "incident", "change management"],
+      Automation: ["automation", "scripting", "powershell", "ansible"],
+      AI: ["ai", "genai", "ai-powered", "machine learning"],
+      "Prompt Engineering": ["prompt engineering", "prompt engineer"],
+      LLM: ["llm", "large language model", "chatgpt", "gpt"],
+      API: ["api", "rest", "webhook"],
+      n8n: ["n8n", "workflow automation"],
+      Docker: ["docker", "container"]
+    };
+
+    const routingKeywords = {
+      ai: ["ai", "genai", "automation", "prompt engineering", "ai-powered", "llm", "api", "n8n", "agent", "copilot"],
+      sys: ["senior system administrator", "it system administrator", "infrastructure", "networking", "enterprise it", "it operations", "microsoft 365", "azure", "aws", "windows server", "active directory", "entra id", "intune", "vmware", "security", "support"]
+    };
+
+    const roleFitPreferred = [
+      "senior infrastructure engineer",
+      "it infrastructure architect",
+      "senior system administrator",
+      "cloud infrastructure engineer",
+      "it operations engineer",
+      "iaas"
+    ];
+
+    const roleRiskPatterns = {
+      "DevOps heavy": ["devops", "ci/cd", "kubernetes platform owner", "sre"],
+      "Terraform / CI/CD heavy": ["terraform", "jenkins", "gitlab ci", "github actions", "pipeline"],
+      "Public Sector / Defense / SÜ2 / DoD": ["public sector", "defense", "sü2", "s2 clearance", "dod", "security clearance", "bundeswehr"],
+      "Strong German requirement blocker": ["fluent german", "native german", "c1 german required", "c2 german"],
+      "Heavy software engineering role": ["software engineer", "backend engineer", "java", "golang", "react", "full-stack"]
+    };
+
+    const el = {
+      roleName: document.getElementById("roleName"),
+      companyName: document.getElementById("companyName"),
+      jobLocation: document.getElementById("jobLocation"),
+      workMode: document.getElementById("workMode"),
+      salary: document.getElementById("salary"),
+      germanLevel: document.getElementById("germanLevel"),
+      primaryResume: document.getElementById("primaryResume"),
+      jobDescription: document.getElementById("jobDescription"),
+      currentResume: document.getElementById("currentResume"),
+      allowSecondary: document.getElementById("allowSecondary"),
+      loadDemoBtn: document.getElementById("loadDemoBtn"),
+      clearBtn: document.getElementById("clearBtn"),
+      startStage0Btn: document.getElementById("startStage0Btn"),
+      runStage1Btn: document.getElementById("runStage1Btn"),
+      runStage15Btn: document.getElementById("runStage15Btn"),
+      approveStage2Btn: document.getElementById("approveStage2Btn"),
+      skipTailoringBtn: document.getElementById("skipTailoringBtn"),
+      stage0Output: document.getElementById("stage0Output"),
+      stage1Output: document.getElementById("stage1Output"),
+      stage15Output: document.getElementById("stage15Output"),
+      stage2Output: document.getElementById("stage2Output"),
+      stage2Locked: document.getElementById("stage2Locked"),
+      stage2Reminder: document.getElementById("stage2Reminder"),
+      stage1ScoreBar: document.getElementById("stage1ScoreBar"),
+      stage1ScoreValue: document.getElementById("stage1ScoreValue"),
+      atsLegend: document.getElementById("atsLegend"),
+      stage1Badges: document.getElementById("stage1Badges"),
+      riskFlags: document.getElementById("riskFlags"),
+      langEn: document.getElementById("langEn"),
+      langRu: document.getElementById("langRu"),
+      step0: document.getElementById("step0"),
+      step1: document.getElementById("step1"),
+      step15: document.getElementById("step15"),
+      step2: document.getElementById("step2"),
+      genStage1PromptBtn: document.getElementById("genStage1PromptBtn"),
+      genStage2PromptBtn: document.getElementById("genStage2PromptBtn"),
+      copyPromptBtn: document.getElementById("copyPromptBtn"),
+      promptOutput: document.getElementById("promptOutput"),
+      copyStatus: document.getElementById("copyStatus")
+    };
+
+    function normalizeText(text) {
+      return (text || "").toLowerCase().replace(/\s+/g, " ").trim();
+    }
+
+    function countKeywordHits(text, keywords) {
+      return keywords.reduce((acc, kw) => acc + (text.includes(kw.toLowerCase()) ? 1 : 0), 0);
+    }
+
+    function getCombinedText() {
+      return normalizeText([
+        el.roleName.value,
+        el.jobDescription.value,
+        el.currentResume.value
+      ].join(" "));
+    }
+
+    function scoreAts(jobText, resumeText) {
+      let groupHits = 0;
+      let maxPossible = Object.keys(atsGroups).length * 2;
+
+      Object.values(atsGroups).forEach((groupKeywords) => {
+        const hitJob = countKeywordHits(jobText, groupKeywords) > 0 ? 1 : 0;
+        const hitResume = countKeywordHits(resumeText, groupKeywords) > 0 ? 1 : 0;
+        groupHits += hitJob + hitResume;
+      });
+
+      const ratio = maxPossible === 0 ? 0 : groupHits / maxPossible;
+      return Math.max(0, Math.min(100, Math.round(40 + ratio * 60)));
+    }
+
+    function getVerdict(score) {
+      if (score >= 82) return "Strong Chance";
+      if (score >= 62) return "Worth Trying";
+      return "Low Chance";
+    }
+
+    function getHiringChance(score) {
+      if (score >= 82) return "High";
+      if (score >= 62) return "Medium";
+      return "Low";
+    }
+
+    function getTailoringPush(score) {
+      if (score >= 80) return "90%+";
+      if (score >= 65) return "85%+";
+      return "Not realistically";
+    }
+
+    function getApplyDecision(score) {
+      if (score >= 78) return "Yes";
+      if (score >= 58) return "Maybe";
+      return "No";
+    }
+
+    function detectRiskFlags(text) {
+      const flags = [];
+      for (const label in roleRiskPatterns) {
+        if (countKeywordHits(text, roleRiskPatterns[label]) > 0) {
+          flags.push(label);
+        }
+      }
+      return flags;
+    }
+
+    function selectedPrimaryByRouting(text) {
+      const aiHits = countKeywordHits(text, routingKeywords.ai);
+      const sysHits = countKeywordHits(text, routingKeywords.sys);
+
+      if (aiHits >= sysHits) {
+        return {
+          primary: "AI Engineer.pdf",
+          reason: "AI/automation/prompt-oriented keywords are stronger."
+        };
+      }
+      return {
+        primary: "System Administrator.pdf",
+        reason: "Infrastructure/system administration/enterprise IT keywords are stronger."
+      };
+    }
+
+    function roleSnapshotText() {
+      const jd = normalizeText(el.jobDescription.value);
+      const onCall = /(on-call|on call|shift|24\/7|rotating shift)/.test(jd) ? "Yes" : "No";
+      const relocationRisk = /(must be in germany|must relocate|relocation required|on-site in)/.test(jd) ? "Medium/High" : "Low/Unknown";
+      const blueCard = /(visa|blue card|sponsorship|work permit)/.test(jd) ? "Potentially relevant" : "Possibly relevant for Germany full-time hiring";
+
+      return [
+        "1) Role Snapshot",
+        `- Role name: ${el.roleName.value || "Not specified"}`,
+        `- Company name: ${el.companyName.value || "Not specified"}`,
+        `- Work mode: ${el.workMode.value || "Unknown"}`,
+        `- Location: ${el.jobLocation.value || "Not specified"}`,
+        `- German requirement: ${el.germanLevel.value || "Not specified"}`,
+        `- Salary information: ${el.salary.value || "Not specified"}`,
+        `- On-call or shift signs: ${onCall}`,
+        `- Relocation risk: ${relocationRisk}`,
+        `- Blue Card relevance: ${blueCard}`
+      ].join("\n");
+    }
+
+    function roleFitText(text) {
+      const preferredHits = countKeywordHits(text, roleFitPreferred);
+      const flags = detectRiskFlags(text);
+      const fitLabel = preferredHits >= 2 ? "Close to preferred roles" : (preferredHits === 1 ? "Partly aligned" : "Weak alignment");
+      const flagLine = flags.length ? flags.join(", ") : "No major blockers detected";
+
+      return [
+        "2) Role Fit Filter",
+        `- Preferred role alignment: ${fitLabel}`,
+        `- Risk flags: ${flagLine}`
+      ].join("\n");
+    }
+
+    function stageStatusClass(value) {
+      if (["Strong Chance", "High", "Yes", "90%+"].includes(value)) return "ok";
+      if (["Worth Trying", "Medium", "Maybe", "85%+"].includes(value)) return "warn";
+      return "danger";
+    }
+
+    function setStepState(stepEl, mode, text) {
+      stepEl.classList.remove("done", "active", "locked");
+      if (mode) stepEl.classList.add(mode);
+      const stateEl = stepEl.querySelector(".step-state");
+      if (stateEl) stateEl.textContent = text;
+    }
+
+    function refreshWorkflowUI() {
+      const t = i18n[state.language];
+      setStepState(el.step0, state.stage0Done ? "done" : "active", state.stage0Done ? t.stepStateDone : t.stepStateReady);
+      setStepState(el.step1, state.stage1Done ? "done" : (state.stage0Done ? "active" : ""), state.stage1Done ? t.stepStateDone : (state.stage0Done ? t.stepStateReady : t.stepStatePending));
+      setStepState(el.step15, state.stage15Done ? "done" : (state.stage1Done ? "active" : ""), state.stage15Done ? t.stepStateDone : (state.stage1Done ? t.stepStateReady : t.stepStatePending));
+      setStepState(el.step2, state.stage2Approved ? "done" : "locked", state.stage2Approved ? t.stepStateApproved : t.stepStateLocked);
+    }
+
+    function runStage0() {
+      if (!el.jobDescription.value.trim()) {
+        el.stage0Output.textContent = i18n[state.language].msgNeedJd;
+        return;
+      }
+
+      const text = getCombinedText();
+      const selected = selectedPrimaryByRouting(text);
+      state.selectedPrimaryResume = selected.primary;
+      state.allowSecondary = el.allowSecondary.checked;
+      state.stage0Done = true;
+      state.stage1Done = false;
+      state.stage15Done = false;
+      state.stage2Approved = false;
+      lockStage2();
+
+      el.primaryResume.value = selected.primary;
+      el.stage0Output.textContent = [
+        `Selected Primary Resume: ${selected.primary}`,
+        `Secondary Resume Used for Enhancement: ${state.allowSecondary ? "Yes" : "No"}`,
+        `Reason: ${selected.reason}`,
+        "Continue using the primary resume as the master structure."
+      ].join("\n");
+
+      el.runStage1Btn.disabled = false;
+      el.runStage15Btn.disabled = true;
+      el.approveStage2Btn.disabled = true;
+      el.skipTailoringBtn.disabled = true;
+      el.stage1Output.textContent = i18n[state.language].stage1Empty;
+      el.stage15Output.textContent = i18n[state.language].stage15Empty;
+      el.riskFlags.innerHTML = "";
+      el.stage1Badges.innerHTML = "";
+      el.stage1ScoreBar.style.width = "0%";
+      el.stage1ScoreValue.textContent = "0/100";
+      refreshWorkflowUI();
+    }
+
+    function runStage1() {
+      if (!state.stage0Done) return;
+
+      const jobText = normalizeText(el.jobDescription.value);
+      const resumeText = normalizeText(el.currentResume.value);
+      if (!jobText || !resumeText) {
+        el.stage1Output.textContent = i18n[state.language].msgNeedBothTexts;
+        return;
+      }
+
+      const score = scoreAts(jobText, resumeText);
+      const verdict = getVerdict(score);
+      const hiring = getHiringChance(score);
+      const push = getTailoringPush(score);
+      const apply = getApplyDecision(score);
+      const flags = detectRiskFlags(jobText + " " + el.roleName.value.toLowerCase());
+
+      state.lastAtsScore = score;
+      state.lastFlags = flags;
+      state.stage1Done = true;
+
+      const lines = [
+        roleSnapshotText(),
+        "",
+        roleFitText(jobText + " " + el.roleName.value.toLowerCase()),
+        "",
+        "3) ATS Match Score",
+        `- ${score}/100`,
+        "",
+        "4) Overall Verdict",
+        `- ${verdict}`,
+        "",
+        "5) Hiring Chance Label",
+        `- ${hiring}`,
+        "",
+        "6) Can tailoring realistically push to:",
+        `- ${push}`,
+        "",
+        "7) Worth applying?",
+        `- ${apply}`
+      ];
+      el.stage1Output.textContent = lines.join("\n");
+      el.stage1ScoreBar.style.width = score + "%";
+      el.stage1ScoreValue.textContent = `${score}/100`;
+
+      el.stage1Badges.innerHTML = "";
+      [verdict, hiring, push, apply].forEach((value) => {
+        const badge = document.createElement("span");
+        badge.className = "status " + stageStatusClass(value);
+        badge.textContent = value;
+        el.stage1Badges.appendChild(badge);
+      });
+
+      el.runStage15Btn.disabled = false;
+      el.approveStage2Btn.disabled = true;
+      el.skipTailoringBtn.disabled = true;
+      refreshWorkflowUI();
+    }
+
+    function runStage15() {
+      if (!state.stage1Done) return;
+
+      const flags = state.lastFlags;
+      const score = state.lastAtsScore;
+
+      const fixability = flags.length <= 1 ? "Mostly yes" : (flags.length <= 3 ? "Partly" : "Mostly no");
+      const estimated = Math.max(0, Math.min(100, score + (fixability === "Mostly yes" ? 10 : fixability === "Partly" ? 6 : 3)));
+      state.lastEstimatedAfterFixes = estimated;
+      state.stage15Done = true;
+
+      el.stage15Output.textContent = [
+        "Immediate Red Flags",
+        `- ${flags.length ? flags.join(", ") : "No immediate red flags detected."}`,
+        "",
+        "Fixability",
+        `- ${fixability}`,
+        "",
+        "Estimated ATS Score After Fixes",
+        `- ${estimated}/100`,
+        "",
+        "Do you want to proceed with Stage 2 and tailor the resume strictly in the original format?"
+      ].join("\n");
+
+      el.riskFlags.innerHTML = "";
+      if (flags.length) {
+        flags.forEach((flag) => {
+          const card = document.createElement("div");
+          card.className = "risk-card high";
+          card.textContent = flag;
+          el.riskFlags.appendChild(card);
+        });
+      } else {
+        const card = document.createElement("div");
+        card.className = "risk-card";
+        card.textContent = i18n[state.language].msgNoFlags;
+        el.riskFlags.appendChild(card);
+      }
+
+      el.approveStage2Btn.disabled = false;
+      el.skipTailoringBtn.disabled = false;
+      refreshWorkflowUI();
+    }
+
+    function lockStage2() {
+      state.stage2Approved = false;
+      el.stage2Locked.style.display = "block";
+      el.stage2Output.style.display = "none";
+      el.stage2Reminder.style.display = "none";
+      el.stage2Output.textContent = "";
+      refreshWorkflowUI();
+    }
+
+    function approveStage2() {
+      if (!state.stage15Done) return;
+      state.stage2Approved = true;
+      el.stage2Locked.style.display = "none";
+      el.stage2Output.style.display = "block";
+      el.stage2Reminder.style.display = "block";
+
+      const baseScore = state.lastEstimatedAfterFixes || state.lastAtsScore;
+      const finalScore = Math.max(0, Math.min(100, baseScore + 2));
+      const keywordsToAdd = [];
+      const keywordsAvoid = [];
+      const text = normalizeText(el.jobDescription.value + " " + el.currentResume.value);
+
+      Object.keys(atsGroups).forEach((groupName) => {
+        const hits = countKeywordHits(text, atsGroups[groupName]);
+        if (hits === 0 && keywordsToAdd.length < 8) keywordsToAdd.push(groupName);
+      });
+
+      ["Kubernetes", "Deep software architecture claims", "Advanced coding ownership", "Unverified certifications"].forEach((item) => {
+        if (keywordsAvoid.length < 4) keywordsAvoid.push(item);
+      });
+
+      const bulletIdeas = [
+        "Reframe achievements with measurable infrastructure reliability and uptime outcomes.",
+        "Highlight enterprise-scale identity and access administration impact.",
+        "Add one concise line on automation outcomes (ticket reduction, deployment speed, MTTR).",
+        "Show security-hardening responsibilities using truthful technologies already used.",
+        "Align role wording with German market terms: infrastructure operations, cloud platform support, IT security."
+      ];
+
+      el.stage2Output.textContent = [
+        `Selected primary resume: ${state.selectedPrimaryResume || "Not specified"}`,
+        `Allowed secondary enhancement: ${state.allowSecondary ? "Yes" : "No"}`,
+        `Suggested resume headline: ${el.roleName.value ? (el.roleName.value + " | Cloud & Infrastructure") : "Not specified"}`,
+        "Summary positioning: Senior Cloud & Infrastructure profile focused on reliable operations, security posture, and enterprise administration. If exact evidence is missing: Not specified.",
+        "",
+        "5 resume bullet improvement ideas:",
+        ...bulletIdeas.map((b, i) => `${i + 1}. ${b}`),
+        "",
+        `Keywords to add: ${keywordsToAdd.length ? keywordsToAdd.join(", ") : "Not specified"}`,
+        `Keywords to avoid or keep honest: ${keywordsAvoid.join(", ")}`,
+        `Risk notes: ${state.lastFlags.length ? state.lastFlags.join(", ") : "Not specified"}`,
+        `Cover letter need: ${state.lastAtsScore < 78 ? "Recommended" : "Optional but useful"}`,
+        `Relocation letter usage: ${/germany|berlin|munich|hamburg|frankfurt/.test(normalizeText(el.jobDescription.value)) ? "Recommended" : "Optional"}`,
+        "Blue Card strategy note: Mention legal work authorization path and readiness for Blue Card process if employer supports sponsorship.",
+        `Final ATS Match Score Achieved: ${finalScore}/100`,
+        "",
+        "Do not invent employers.",
+        "Do not invent certifications.",
+        "Do not invent projects.",
+        "Do not invent tools.",
+        "Do not invent responsibilities.",
+        "If information is missing, write: Not specified."
+      ].join("\n");
+      refreshWorkflowUI();
+    }
+
+    function skipTailoring() {
+      lockStage2();
+      el.stage2Output.style.display = "block";
+      el.stage2Output.textContent = i18n[state.language].msgTailoringSkipped;
+      refreshWorkflowUI();
+    }
+
+    function buildPrompt(stage) {
+      const role = el.roleName.value || "ROLE NAME";
+      const company = el.companyName.value || "COMPANY NAME";
+      const jd = el.jobDescription.value || "Not specified";
+      const selectedResume = state.selectedPrimaryResume || el.primaryResume.value || "Not specified";
+      const sec = state.allowSecondary ? "Yes" : "No";
+
+      const stageInstruction = stage === 1
+        ? "Do not tailor yet. Analyze only. Stop and ask for approval before Stage 2."
+        : "Tailor only after approval. Preserve original resume format. Do not invent facts. Final resume only. Add final ATS score at the bottom.";
+
+      return [
+        `Chat name: ${role} - ${company}`,
+        `Selected primary resume: ${selectedResume}`,
+        `Secondary enhancement allowed: ${sec}`,
+        "",
+        "Job description:",
+        jd,
+        "",
+        `Current stage instruction: ${stageInstruction}`,
+        "Truth rule: Do not invent employers, certifications, projects, tools, or responsibilities.",
+        "Approval rule: Stage 2 tailoring is allowed only after explicit human approval."
+      ].join("\n");
+    }
+
+    function applyI18n() {
+      document.querySelectorAll("[data-i18n]").forEach((node) => {
+        const key = node.getAttribute("data-i18n");
+        if (i18n[state.language][key]) node.textContent = i18n[state.language][key];
+      });
+      el.workMode.options[0].text = i18n[state.language].wmRemote;
+      el.workMode.options[1].text = i18n[state.language].wmHybrid;
+      el.workMode.options[2].text = i18n[state.language].wmOnSite;
+      el.workMode.options[3].text = i18n[state.language].wmUnknown;
+      el.germanLevel.options[5].text = i18n[state.language].notSpecified;
+      el.atsLegend.innerHTML = `
+        <span class="status ok">${i18n[state.language].atsLegendGood}</span>
+        <span class="status warn">${i18n[state.language].atsLegendMedium}</span>
+        <span class="status danger">${i18n[state.language].atsLegendLow}</span>
+      `;
+      el.langEn.classList.toggle("active", state.language === "en");
+      el.langRu.classList.toggle("active", state.language === "ru");
+      refreshWorkflowUI();
+    }
+
+    function loadDemoData() {
+      el.roleName.value = "Senior Infrastructure Engineer";
+      el.companyName.value = "MusterTech GmbH";
+      el.jobLocation.value = "Berlin, Germany";
+      el.workMode.value = "Hybrid";
+      el.salary.value = "75,000 - 92,000 EUR/year";
+      el.germanLevel.value = "B1";
+      el.allowSecondary.checked = true;
+      el.jobDescription.value = "We are hiring a Senior Infrastructure Engineer for hybrid work in Berlin. You will manage cloud and on-prem infrastructure, Azure and AWS workloads, Windows Server, Active Directory, Entra ID, Intune, VMware, monitoring, networking, security hardening, IT operations, automation, and occasional on-call support. Experience with APIs and AI-powered automation is a plus.";
+      el.currentResume.value = "Cloud & Infrastructure Engineer with 14+ years in enterprise IT operations, system administration, Microsoft 365, Azure, AWS, Windows Server, Active Directory, Entra ID, Intune, VMware, Linux, networking, VPN, monitoring, incident response, security best practices, customer support, automation with PowerShell, and workflow optimization.";
+    }
+
+    function clearAll() {
+      [
+        el.roleName, el.companyName, el.jobLocation, el.salary,
+        el.jobDescription, el.currentResume, el.promptOutput
+      ].forEach((f) => f.value = "");
+      el.workMode.value = "Unknown";
+      el.germanLevel.value = "Not specified";
+      el.allowSecondary.checked = false;
+      el.primaryResume.value = "AI Engineer.pdf";
+      el.copyStatus.textContent = "";
+
+      state.selectedPrimaryResume = "Not specified";
+      state.allowSecondary = false;
+      state.stage0Done = false;
+      state.stage1Done = false;
+      state.stage15Done = false;
+      state.stage2Approved = false;
+      state.lastAtsScore = 0;
+      state.lastEstimatedAfterFixes = 0;
+      state.lastFlags = [];
+
+      el.stage0Output.textContent = i18n[state.language].stage0Empty;
+      el.stage1Output.textContent = i18n[state.language].stage1Empty;
+      el.stage15Output.textContent = i18n[state.language].stage15Empty;
+      el.riskFlags.innerHTML = "";
+      el.stage1Badges.innerHTML = "";
+      el.stage1ScoreBar.style.width = "0%";
+      el.stage1ScoreValue.textContent = "0/100";
+      el.runStage1Btn.disabled = true;
+      el.runStage15Btn.disabled = true;
+      el.approveStage2Btn.disabled = true;
+      el.skipTailoringBtn.disabled = true;
+      lockStage2();
+      refreshWorkflowUI();
+    }
+
+    el.loadDemoBtn.addEventListener("click", loadDemoData);
+    el.clearBtn.addEventListener("click", clearAll);
+    el.startStage0Btn.addEventListener("click", runStage0);
+    el.runStage1Btn.addEventListener("click", runStage1);
+    el.runStage15Btn.addEventListener("click", runStage15);
+    el.approveStage2Btn.addEventListener("click", approveStage2);
+    el.skipTailoringBtn.addEventListener("click", skipTailoring);
+
+    el.genStage1PromptBtn.addEventListener("click", () => {
+      el.promptOutput.value = buildPrompt(1);
+    });
+
+    el.genStage2PromptBtn.addEventListener("click", () => {
+      if (!state.stage2Approved) {
+        el.promptOutput.value = i18n[state.language].msgNeedStage2Approval;
+        return;
+      }
+      el.promptOutput.value = buildPrompt(2);
+    });
+
+    el.copyPromptBtn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(el.promptOutput.value || "");
+        el.copyStatus.textContent = i18n[state.language].msgPromptCopied;
+      } catch (err) {
+        el.copyStatus.textContent = i18n[state.language].msgCopyFailed;
+      }
+    });
+
+    el.allowSecondary.addEventListener("change", () => {
+      state.allowSecondary = el.allowSecondary.checked;
+    });
+
+    el.langEn.addEventListener("click", () => {
+      state.language = "en";
+      applyI18n();
+    });
+
+    el.langRu.addEventListener("click", () => {
+      state.language = "ru";
+      applyI18n();
+    });
+
+    applyI18n();
+    clearAll();
+  </script>
+</body>
+</html>
