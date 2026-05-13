@@ -4,35 +4,132 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Resume Adapter Bot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0b1220;
-      --panel: #121b2f;
-      --panel-2: #18243f;
-      --text: #e7edf9;
-      --muted: #9bb0d1;
-      --brand: #4f8cff;
-      --ok: #21c788;
-      --warn: #ffb648;
-      --danger: #ff6b6b;
-      --border: #263659;
-      --badge: #1b2c4a;
-      --shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+      --bg-base: #080a0c;
+      --bg-graphite: #0c1014;
+      --panel: #121a22;
+      --panel-2: #161f2a;
+      --surface-glass: rgba(18, 26, 34, 0.78);
+      --text: #e8edf4;
+      --muted: #8fa3b8;
+      --accent-ai: #38a0ff;
+      --accent-approve: #22c77a;
+      --accent-warn: #f0b429;
+      --accent-risk: #f05252;
+      --border: rgba(120, 160, 200, 0.22);
+      --badge: #152028;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 22px;
+      --space-xs: 6px;
+      --space-sm: 12px;
+      --space-md: 18px;
+      --space-lg: 26px;
+      --space-xl: 40px;
+      --space-2xl: 48px;
+      --section-gap: 20px;
+      --card-pad: 22px;
+      --heading-muted: #a8bdd6;
+      --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.35);
+      --shadow-md: 0 12px 36px rgba(0, 0, 0, 0.42);
+      --shadow-lg: 0 22px 56px rgba(0, 0, 0, 0.55);
+      --shadow-glow-ai: 0 0 48px rgba(56, 160, 255, 0.14);
+      --font-display: "JetBrains Mono", ui-monospace, "Cascadia Mono", monospace;
+      --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+      --bg: var(--bg-graphite);
+      --brand: var(--accent-ai);
+      --ok: var(--accent-approve);
+      --warn: var(--accent-warn);
+      --danger: var(--accent-risk);
+      --shadow: var(--shadow-md);
     }
 
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(circle at 10% 10%, #152342, var(--bg) 50%);
+      font-family: var(--font-body);
+      background:
+        radial-gradient(ellipse 120% 80% at 15% -10%, rgba(56, 160, 255, 0.09), transparent 52%),
+        radial-gradient(ellipse 90% 60% at 95% 15%, rgba(34, 199, 122, 0.05), transparent 48%),
+        linear-gradient(180deg, var(--bg-base) 0%, var(--bg-graphite) 38%, #060809 100%);
       color: var(--text);
       min-height: 100vh;
     }
 
+    @media (prefers-reduced-motion: no-preference) {
+      html {
+        scroll-behavior: smooth;
+      }
+    }
+
     .container {
-      width: min(1200px, 92vw);
-      margin: 26px auto 40px;
+      width: min(1140px, 92vw);
+      margin: var(--space-md) auto var(--space-2xl);
+      padding: 0 var(--space-xs);
+    }
+
+    .type-eyebrow {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent-ai);
+      margin: 0 0 var(--space-md);
+    }
+
+    .type-hero {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(1.55rem, 3.8vw, 2.35rem);
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+
+    .type-section {
+      font-family: var(--font-display);
+      font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #c5d6eb;
+    }
+
+    .type-card-title {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: #dbe7ff;
+    }
+
+    .type-lead {
+      font-size: 1.05rem;
+      line-height: 1.55;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .type-label {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #9eb6d1;
+    }
+
+    .type-small {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.45;
     }
 
     .topbar {
@@ -41,8 +138,8 @@
       z-index: 10;
       display: flex;
       justify-content: flex-end;
-      margin-bottom: 12px;
-      gap: 8px;
+      margin-bottom: var(--space-md);
+      gap: var(--space-xs);
     }
 
     .lang-wrap {
@@ -50,21 +147,32 @@
       align-items: center;
       gap: 6px;
       padding: 6px;
-      border-radius: 12px;
+      border-radius: var(--radius-lg);
       border: 1px solid var(--border);
-      background: rgba(10, 18, 34, 0.86);
-      backdrop-filter: blur(8px);
+      background: var(--surface-glass);
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow-sm);
     }
 
     .lang-btn {
       border: 1px solid var(--border);
       background: var(--panel);
       color: var(--text);
-      padding: 8px 14px;
-      border-radius: 10px;
+      padding: 10px 16px;
+      min-height: 44px;
+      border-radius: var(--radius-md);
       cursor: pointer;
+      font-family: var(--font-display);
       font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.08em;
       min-width: 56px;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .lang-btn:hover {
+      border-color: rgba(56, 160, 255, 0.35);
+      background: rgba(18, 28, 38, 0.95);
     }
 
     .lang-btn.active {
@@ -74,22 +182,641 @@
     }
 
     .card {
-      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      background: linear-gradient(160deg, rgba(20, 28, 36, 0.92), rgba(12, 17, 23, 0.94));
       border: 1px solid var(--border);
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-      padding: 18px;
-      margin-bottom: 14px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: var(--card-pad);
+      margin-bottom: var(--section-gap);
+      backdrop-filter: blur(12px);
+      transition: border-color 0.2s ease;
     }
 
-    h1, h2, h3 { margin: 0 0 8px; }
-    h1 { font-size: 28px; }
-    h2 { font-size: 20px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-    h3 { font-size: 16px; color: #c9d8f2; }
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .card:hover {
+        border-color: rgba(130, 175, 220, 0.28);
+      }
+    }
 
-    .subtitle {
+    .card-enter {
+      opacity: 0;
+      transform: translateY(14px);
+      animation: cardEnter 0.65s ease forwards;
+    }
+
+    section.card-enter:nth-of-type(2) { animation-delay: 0.06s; }
+    section.card-enter:nth-of-type(3) { animation-delay: 0.11s; }
+    section.card-enter:nth-of-type(4) { animation-delay: 0.16s; }
+    section.card-enter:nth-of-type(5) { animation-delay: 0.21s; }
+    section.card-enter:nth-of-type(6) { animation-delay: 0.26s; }
+    section.card-enter:nth-of-type(7) { animation-delay: 0.31s; }
+    section.card-enter:nth-of-type(8) { animation-delay: 0.36s; }
+    section.card-enter:nth-of-type(9) { animation-delay: 0.41s; }
+    section.card-enter:nth-of-type(10) { animation-delay: 0.46s; }
+    section.card-enter:nth-of-type(11) { animation-delay: 0.51s; }
+
+    @keyframes cardEnter {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: var(--space-xl) var(--space-lg);
+      margin-bottom: var(--section-gap);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(100, 145, 195, 0.2);
+      background:
+        radial-gradient(ellipse 70% 55% at 85% 12%, rgba(56, 160, 255, 0.07), transparent 55%),
+        linear-gradient(165deg, rgba(16, 22, 30, 0.98), rgba(8, 11, 15, 0.99));
+      box-shadow: var(--shadow-md);
+    }
+
+    .hero-grid {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(260px, 0.92fr);
+      gap: var(--space-xl);
+      align-items: start;
+      z-index: 1;
+    }
+
+    .hero-copy {
+      max-width: 560px;
+      min-width: 0;
+    }
+
+    .hero-title-line {
+      display: block;
+      opacity: 0;
+      transform: translateY(16px);
+      animation: heroLine 0.75s ease forwards;
+    }
+
+    .hero-title-line:nth-child(1) { animation-delay: 0.08s; }
+    .hero-title-line:nth-child(2) { animation-delay: 0.2s; }
+
+    @keyframes heroLine {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-lead {
+      margin-top: var(--space-md);
+      margin-bottom: var(--space-lg);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+
+    .hero-meta-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+    }
+
+    .hero-visual-wrap {
+      position: relative;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .dashboard-preview {
+      position: relative;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(90, 135, 185, 0.22);
+      background: rgba(10, 14, 20, 0.92);
+      padding: var(--space-sm);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      overflow: hidden;
+      max-height: min(360px, 52vh);
+    }
+
+    @keyframes heroAmbientDrift {
+      0%,
+      100% {
+        opacity: 0.18;
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+      50% {
+        opacity: 0.36;
+        transform: translate3d(-2%, 1.5%, 0) scale(1.02);
+      }
+    }
+
+    @keyframes dashFramePulse {
+      0%,
+      100% {
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 0 0 rgba(56, 160, 255, 0);
+      }
+      50% {
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 22px rgba(56, 160, 255, 0.09);
+      }
+    }
+
+    @keyframes dashBarShimmer {
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+    }
+
+    @keyframes stepCardLive {
+      0%,
+      100% {
+        border-color: rgba(120, 160, 200, 0.22);
+        box-shadow: 0 0 0 0 rgba(56, 160, 255, 0);
+      }
+      50% {
+        border-color: rgba(100, 175, 235, 0.38);
+        box-shadow: 0 0 20px rgba(56, 160, 255, 0.09);
+      }
+    }
+
+    @keyframes langTabGlow {
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(56, 160, 255, 0.12);
+      }
+      50% {
+        box-shadow: 0 0 14px rgba(56, 160, 255, 0.2);
+      }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        background: radial-gradient(ellipse 60% 50% at 78% 22%, rgba(56, 160, 255, 0.11), transparent 58%);
+        animation: heroAmbientDrift 20s ease-in-out infinite;
+      }
+
+      .dashboard-preview {
+        animation: dashFramePulse 6.5s ease-in-out infinite;
+      }
+
+      .dashboard-preview .dash-bar span {
+        background: linear-gradient(
+          105deg,
+          var(--accent-ai) 0%,
+          #22d3ee 36%,
+          var(--accent-approve) 50%,
+          #22d3ee 64%,
+          var(--accent-ai) 100%
+        );
+        background-size: 220% 100%;
+        animation: dashBarShimmer 8s ease-in-out infinite;
+      }
+
+      .workflow-steps .step-card.active {
+        animation: stepCardLive 4.8s ease-in-out infinite;
+      }
+
+      .lang-btn.active {
+        animation: langTabGlow 3.8s ease-in-out infinite;
+      }
+    }
+
+    .dash-scan {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(
+        105deg,
+        transparent 42%,
+        rgba(56, 160, 255, 0.09) 50%,
+        transparent 58%
+      );
+      animation: dashScan 5.2s ease-in-out infinite;
+    }
+
+    @keyframes dashScan {
+      0%,
+      100% {
+        transform: translateX(-18%);
+        opacity: 0.35;
+      }
+      50% {
+        transform: translateX(18%);
+        opacity: 0.85;
+      }
+    }
+
+    .dash-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: #8eb6e8;
+      padding: 6px 8px 12px;
+      border-bottom: 1px solid rgba(80, 130, 180, 0.2);
+    }
+
+    .dash-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-approve);
+      box-shadow: 0 0 12px rgba(34, 199, 122, 0.65);
+      animation: pulseDot 3.2s ease-in-out infinite;
+    }
+
+    @keyframes pulseDot {
+      50% {
+        opacity: 0.55;
+      }
+    }
+
+    .dash-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-sm);
+      padding-top: var(--space-sm);
+    }
+
+    .dash-panel {
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(80, 120, 170, 0.18);
+      background: rgba(8, 12, 18, 0.72);
+      padding: 10px 11px;
+      font-size: 12px;
+      color: #c9daf1;
+      min-width: 0;
+    }
+
+    .dash-span-2 {
+      grid-column: span 2;
+      min-width: 0;
+    }
+
+    .dash-label {
+      font-family: var(--font-display);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      color: #7c9cbb;
+      margin-bottom: 8px;
+    }
+
+    .dash-score {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--accent-ai);
+      line-height: 1;
+    }
+
+    .dash-score span {
+      font-size: 14px;
       color: var(--muted);
-      margin-bottom: 14px;
+      font-weight: 600;
+    }
+
+    .dash-bar {
+      margin-top: 10px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      overflow: hidden;
+    }
+
+    .dash-bar span {
+      display: block;
+      height: 100%;
+      width: 72%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent-ai), #22d3ee, var(--accent-approve));
+    }
+
+    .dash-chips {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .dash-chips li {
+      font-size: 11px;
+      padding: 5px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(240, 82, 82, 0.35);
+      background: rgba(240, 82, 82, 0.08);
+      color: #fecaca;
+    }
+
+    .dash-select-mock {
+      font-family: var(--font-display);
+      font-size: 11px;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px dashed rgba(56, 160, 255, 0.35);
+      color: #b8d9ff;
+      background: rgba(56, 160, 255, 0.06);
+    }
+
+    .dash-approve-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .dash-lock {
+      font-family: var(--font-display);
+      font-size: 11px;
+      color: var(--accent-warn);
+      letter-spacing: 0.04em;
+    }
+
+    .dash-pre {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 10px;
+      line-height: 1.55;
+      color: #b7cfe8;
+      white-space: pre-wrap;
+    }
+
+    .workflow-preview .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-sm);
+      margin-top: 0;
+    }
+
+    .preview-step {
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: rgba(10, 16, 22, 0.55);
+      padding: var(--space-md);
+      min-height: 108px;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .preview-step:hover {
+        border-color: rgba(120, 165, 215, 0.28);
+        background: rgba(12, 20, 28, 0.65);
+      }
+    }
+
+    .preview-num {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-ai);
+      letter-spacing: 0.12em;
+      margin-bottom: 8px;
+    }
+
+    .risk-signals-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-top: 0;
+    }
+
+    .risk-pill {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-family: var(--font-display);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(240, 180, 60, 0.35);
+      background: rgba(240, 180, 60, 0.08);
+      color: #fcdca8;
+    }
+
+    .risk-pill-label {
+      font-weight: 600;
+      color: #fde7c8;
+    }
+
+    .risk-pill-sub {
+      font-family: var(--font-body);
+      font-size: 10px;
+      letter-spacing: 0.03em;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .use-cases-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-md);
+      margin-top: var(--space-md);
+    }
+
+    .use-case-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      padding: var(--space-md);
+      min-height: 220px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(90, 135, 185, 0.22);
+      background: rgba(8, 12, 18, 0.78);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+      transition: border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease;
+    }
+
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .use-case-card:hover {
+        border-color: rgba(120, 180, 235, 0.38);
+        background: rgba(12, 20, 30, 0.88);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 8px 28px rgba(0, 0, 0, 0.35);
+        transform: translateY(-2px);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .use-case-card:hover {
+        transform: none;
+      }
+    }
+
+    .use-case-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .use-case-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(56, 160, 255, 0.28);
+      background: rgba(56, 160, 255, 0.07);
+      color: var(--accent-ai);
+      flex-shrink: 0;
+    }
+
+    .use-case-icon svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .use-case-card:nth-child(2) .use-case-icon {
+      border-color: rgba(34, 199, 122, 0.32);
+      background: rgba(34, 199, 122, 0.08);
+      color: var(--accent-approve);
+    }
+
+    .use-case-card:nth-child(3) .use-case-icon {
+      border-color: rgba(240, 180, 60, 0.35);
+      background: rgba(240, 180, 60, 0.08);
+      color: var(--accent-warn);
+    }
+
+    .use-case-chip {
+      font-family: var(--font-display);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(120, 175, 220, 0.35);
+      color: #b8d4f0;
+      background: rgba(18, 28, 40, 0.85);
+      white-space: normal;
+      text-align: right;
+      max-width: min(140px, 48%);
+    }
+
+    .use-case-card:nth-child(2) .use-case-chip {
+      border-color: rgba(80, 200, 150, 0.35);
+      color: #9fe8c8;
+      background: rgba(12, 28, 22, 0.75);
+    }
+
+    .use-case-card:nth-child(3) .use-case-chip {
+      border-color: rgba(230, 180, 80, 0.4);
+      color: #fcd9a4;
+      background: rgba(28, 22, 12, 0.75);
+    }
+
+    .use-case-label {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #7c9cbb;
+    }
+
+    .use-case-title {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      line-height: 1.3;
+      color: #e4edfb;
+    }
+
+    .use-case-desc {
+      margin: 0;
+      margin-top: auto;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-title-line,
+      .dash-scan,
+      .dash-dot {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .hero::after {
+        display: none !important;
+      }
+      .dashboard-preview,
+      .dashboard-preview .dash-bar span,
+      .workflow-steps .step-card.active,
+      .lang-btn.active {
+        animation: none !important;
+      }
+      .card-enter {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+      }
+    }
+
+    section.card > h2:first-of-type {
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--heading-muted);
+      margin: 0 0 var(--space-sm);
+      padding-bottom: var(--space-sm);
+      border-bottom: 1px solid rgba(120, 160, 200, 0.12);
+    }
+
+    .section-lead {
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--muted);
+      margin: var(--space-sm) 0 var(--space-md);
+    }
+
+    #hero-title.type-hero {
+      margin-bottom: 0;
+      letter-spacing: -0.03em;
+    }
+
+    .preview-step h3,
+    .step-title {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      line-height: 1.35;
+      color: #dce7f5;
+      margin: 0 0 var(--space-xs);
+    }
+
+    .preview-step p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--muted);
+      font-family: var(--font-body);
     }
 
     .badge-row {
@@ -101,46 +828,43 @@
     .badge {
       background: var(--badge);
       border: 1px solid var(--border);
-      color: #d7e4ff;
-      padding: 6px 10px;
+      color: #d5e6ff;
+      padding: 6px 12px;
       border-radius: 999px;
-      font-size: 12px;
+      font-family: var(--font-display);
+      font-size: 11px;
       font-weight: 600;
-      letter-spacing: 0.2px;
+      letter-spacing: 0.08em;
     }
 
     .workflow-steps {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-bottom: 14px;
+      gap: var(--space-sm);
+      margin-bottom: 0;
+      margin-top: var(--space-md);
     }
 
     .step-card {
       border: 1px solid var(--border);
-      border-radius: 12px;
-      background: #0f1a31;
-      padding: 10px;
-      min-height: 78px;
-    }
-
-    .step-title {
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: #d8e5ff;
+      border-radius: var(--radius-md);
+      background: rgba(10, 16, 22, 0.72);
+      padding: var(--space-sm);
+      min-height: 76px;
     }
 
     .step-state {
       display: inline-flex;
       align-items: center;
       border-radius: 999px;
-      padding: 4px 9px;
-      font-size: 11px;
-      font-weight: 700;
+      padding: 5px 10px;
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
       border: 1px solid var(--border);
       color: #c5d6f8;
-      background: #172540;
+      background: rgba(18, 28, 40, 0.9);
     }
 
     .step-card.done .step-state {
@@ -164,13 +888,33 @@
     .grid {
       display: grid;
       grid-template-columns: repeat(12, 1fr);
-      gap: 12px;
+      gap: var(--space-md);
     }
 
     .field {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: var(--space-xs);
+    }
+
+    .field-check {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-sm);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: normal;
+      text-transform: none;
+      color: var(--text);
+      cursor: pointer;
+      line-height: 1.4;
+    }
+
+    .field-check input {
+      margin-top: 4px;
+      width: auto;
+      flex-shrink: 0;
     }
 
     .col-3 { grid-column: span 3; }
@@ -179,19 +923,30 @@
     .col-12 { grid-column: span 12; }
 
     label {
-      font-size: 13px;
-      color: #c8d6f0;
+      font-size: 12px;
+      color: #b9cce8;
       font-weight: 600;
+      font-family: var(--font-display);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
     }
 
     input, select, textarea {
       width: 100%;
-      background: #0e172a;
+      background: rgba(8, 12, 18, 0.85);
       border: 1px solid var(--border);
       color: var(--text);
       padding: 10px 12px;
-      border-radius: 10px;
+      border-radius: var(--radius-md);
       font-size: 14px;
+      font-family: var(--font-body);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: rgba(56, 160, 255, 0.45);
+      box-shadow: 0 0 0 3px rgba(56, 160, 255, 0.12);
     }
 
     textarea { min-height: 130px; resize: vertical; }
@@ -199,36 +954,108 @@
     .action-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
+      gap: var(--space-sm);
+      margin-top: var(--space-md);
     }
 
     .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       border: 1px solid var(--border);
-      background: #172742;
+      background: rgba(16, 24, 34, 0.92);
       color: var(--text);
-      padding: 10px 14px;
-      border-radius: 10px;
+      min-height: 42px;
+      padding: 10px 18px;
+      border-radius: var(--radius-md);
       cursor: pointer;
+      font-family: var(--font-display);
       font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      transition: border-color 0.18s ease, background 0.18s ease, filter 0.18s ease;
+    }
+
+    a.btn {
+      text-decoration: none;
+    }
+
+    .btn:focus-visible,
+    .lang-btn:focus-visible {
+      outline: 2px solid rgba(56, 160, 255, 0.5);
+      outline-offset: 2px;
+    }
+
+    @media (hover: hover) {
+      .btn:hover:not(:disabled) {
+        border-color: rgba(120, 175, 220, 0.35);
+        background: rgba(22, 32, 44, 0.96);
+      }
+    }
+
+    .btn--cta {
+      min-height: 46px;
+      padding: 12px 24px;
+      font-size: 13px;
+      letter-spacing: 0.09em;
+    }
+
+    .btn.btn--outline {
+      background: rgba(12, 18, 26, 0.55);
+      border-color: rgba(120, 160, 200, 0.28);
+      color: var(--text);
+    }
+
+    @media (hover: hover) {
+      .btn.btn--outline:hover:not(:disabled) {
+        border-color: rgba(56, 160, 255, 0.35);
+        background: rgba(56, 160, 255, 0.07);
+      }
     }
 
     .btn.primary {
-      background: var(--brand);
-      border-color: var(--brand);
-      color: white;
+      background: linear-gradient(145deg, #2a82d9, var(--accent-ai));
+      border-color: rgba(100, 185, 255, 0.42);
+      color: #050d14;
+    }
+
+    @media (hover: hover) {
+      .btn.primary:hover:not(:disabled) {
+        filter: brightness(1.06);
+        border-color: rgba(130, 200, 255, 0.55);
+      }
+
+      .btn.primary.btn--cta:hover:not(:disabled) {
+        filter: brightness(1.05);
+      }
+    }
+
+    .btn.primary.btn--cta {
+      box-shadow: 0 6px 20px rgba(56, 160, 255, 0.18);
     }
 
     .btn.success {
-      background: var(--ok);
-      border-color: var(--ok);
-      color: #082115;
+      background: linear-gradient(145deg, #18995f, var(--accent-approve));
+      border-color: rgba(90, 210, 150, 0.42);
+      color: #05180f;
+    }
+
+    @media (hover: hover) {
+      .btn.success:hover:not(:disabled) {
+        filter: brightness(1.06);
+      }
     }
 
     .btn.warn {
-      background: var(--warn);
-      border-color: var(--warn);
-      color: #2a1700;
+      background: linear-gradient(145deg, #d99a18, var(--accent-warn));
+      border-color: rgba(230, 190, 90, 0.45);
+      color: #1a1100;
+    }
+
+    @media (hover: hover) {
+      .btn.warn:hover:not(:disabled) {
+        filter: brightness(1.05);
+      }
     }
 
     .btn:disabled {
@@ -239,7 +1066,8 @@
     .mini-note {
       color: var(--muted);
       font-size: 12px;
-      margin-top: 6px;
+      margin-top: var(--space-sm);
+      line-height: 1.45;
     }
 
     .ats-legend {
@@ -270,8 +1098,8 @@
     .pill-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
+      gap: var(--space-sm);
+      margin-top: var(--space-sm);
     }
 
     .status.ok { background: rgba(33, 199, 136, 0.15); color: #76f5c1; border-color: rgba(33, 199, 136, 0.4); }
@@ -279,8 +1107,8 @@
     .status.danger { background: rgba(255, 107, 107, 0.15); color: #ff9f9f; border-color: rgba(255, 107, 107, 0.45); }
 
     .score-wrap {
-      margin-top: 8px;
-      background: #0e172a;
+      margin-top: var(--space-sm);
+      background: rgba(8, 12, 18, 0.88);
       border: 1px solid var(--border);
       border-radius: 999px;
       height: 18px;
@@ -290,7 +1118,7 @@
     .score-bar {
       height: 100%;
       width: 0;
-      background: linear-gradient(90deg, #3b82f6 0%, #7c3aed 48%, #10b981 100%);
+      background: linear-gradient(90deg, var(--accent-ai) 0%, #22d3ee 42%, var(--accent-approve) 100%);
       transition: width 0.35s ease;
     }
 
@@ -298,17 +1126,18 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-top: 8px;
+      margin-top: var(--space-md);
       color: #c9d9f7;
       font-size: 13px;
       font-weight: 600;
+      font-family: var(--font-body);
     }
 
     .locked {
-      border: 1px dashed #7b8bb0;
-      background: linear-gradient(180deg, #121f39, #111a2f);
-      border-radius: 12px;
-      padding: 14px;
+      border: 1px dashed rgba(130, 155, 185, 0.35);
+      background: rgba(10, 16, 24, 0.65);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
       color: #c6d5f0;
     }
 
@@ -325,19 +1154,20 @@
     }
 
     .risk-grid {
-      margin-top: 10px;
+      margin-top: var(--space-md);
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      gap: var(--space-sm);
     }
 
     .risk-card {
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px;
-      background: #13233f;
+      border-radius: var(--radius-md);
+      padding: var(--space-sm);
+      background: rgba(10, 16, 22, 0.75);
       color: #d9e7ff;
       font-size: 13px;
+      line-height: 1.4;
     }
 
     .risk-card.high {
@@ -349,18 +1179,18 @@
     .prompt-layout {
       display: grid;
       grid-template-columns: 260px 1fr;
-      gap: 12px;
-      margin-top: 6px;
+      gap: var(--space-md);
+      margin-top: var(--space-md);
     }
 
     .prompt-side {
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px;
-      background: #0f1a31;
+      border-radius: var(--radius-md);
+      padding: var(--space-sm);
+      background: rgba(10, 16, 22, 0.72);
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: var(--space-sm);
     }
 
     .prompt-main textarea {
@@ -389,23 +1219,46 @@
     }
 
     .output {
-      background: #0e172a;
+      background: rgba(8, 12, 18, 0.88);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px 12px;
-      margin-top: 8px;
+      border-radius: var(--radius-md);
+      padding: var(--space-sm) var(--space-md);
+      margin-top: var(--space-sm);
       white-space: pre-wrap;
       color: #dbe7ff;
+      font-size: 13px;
+      line-height: 1.5;
     }
 
     .footer {
       text-align: center;
       color: var(--muted);
       font-size: 13px;
-      margin-top: 18px;
+      margin-top: var(--space-xl);
+      padding-bottom: var(--space-md);
+      line-height: 1.5;
     }
 
     @media (max-width: 980px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+      }
+
+      .hero-visual-wrap {
+        min-height: auto;
+        max-width: 520px;
+        margin: 0 auto;
+      }
+
+      .workflow-preview .preview-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .use-cases-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
       .col-3, .col-4, .col-6 { grid-column: span 6; }
       .workflow-steps { grid-template-columns: repeat(2, 1fr); }
       .risk-grid { grid-template-columns: repeat(2, 1fr); }
@@ -414,9 +1267,49 @@
 
     @media (max-width: 640px) {
       .container { width: 94vw; }
+      .type-eyebrow {
+        letter-spacing: 0.12em;
+        font-size: 10px;
+        line-height: 1.5;
+      }
+
+      .hero {
+        padding: var(--space-lg) var(--space-md);
+      }
+
+      .dashboard-preview {
+        max-height: min(320px, 48vh);
+      }
+
+      .hero-actions {
+        flex-direction: column;
+      }
+
+      .hero-actions .btn {
+        width: 100%;
+      }
+
+      .workflow-preview .preview-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .use-cases-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .dash-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .dash-span-2 {
+        grid-column: span 1;
+      }
+
       .col-3, .col-4, .col-6, .col-12 { grid-column: span 12; }
-      h1 { font-size: 24px; }
-      .btn { width: 100%; }
+      .action-row .btn,
+      .prompt-side .btn {
+        width: 100%;
+      }
       .lang-wrap { width: 100%; justify-content: center; }
       .topbar { top: 6px; }
       .workflow-steps { grid-template-columns: 1fr; }
@@ -433,18 +1326,170 @@
       </div>
     </div>
 
-    <header class="card">
-      <h1 data-i18n="headerTitle">AI Resume Adapter Bot</h1>
-      <p class="subtitle" data-i18n="headerSubtitle">3-stage ATS checkup and resume tailoring assistant for the German job market.</p>
-      <div class="badge-row">
-        <span class="badge" data-i18n="badgeMvp">MVP Prototype</span>
-        <span class="badge" data-i18n="badgeGermany">Germany Job Search</span>
-        <span class="badge" data-i18n="badgeApproval">Human Approval Required</span>
-        <span class="badge" data-i18n="badgeTruth">Truthful Resume Rule</span>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p class="type-eyebrow hero-eyebrow" data-i18n="heroEyebrow">AI Resume Adapter / ATS Checkup / Human-in-the-loop Tailoring</p>
+          <h1 id="hero-title" class="type-hero hero-title">
+            <span class="hero-title-line">Tailor resumes with ATS logic,</span>
+            <span class="hero-title-line">recruiter thinking, and human approval.</span>
+          </h1>
+          <p class="type-lead hero-lead" data-i18n="heroSubtitle">Paste a job description, run a structured checkup, detect risks, and prepare a focused resume version only after approval.</p>
+          <div class="hero-actions">
+            <a href="#input-section" class="btn primary btn--cta" data-i18n="heroCtaAts">Run ATS Checkup</a>
+            <a href="#workflow-section" class="btn btn--outline btn--cta" data-i18n="heroCtaWorkflow">Open Workflow</a>
+          </div>
+          <div class="hero-meta-badges badge-row">
+            <span class="badge" data-i18n="badgeMvp">MVP Prototype</span>
+            <span class="badge" data-i18n="badgeGermany">Germany Job Search</span>
+            <span class="badge" data-i18n="badgeApproval">Human Approval Required</span>
+            <span class="badge" data-i18n="badgeTruth">Truthful Resume Rule</span>
+          </div>
+        </div>
+        <div class="hero-visual-wrap">
+          <div class="dashboard-preview" aria-hidden="true">
+            <div class="dash-scan"></div>
+            <div class="dash-header">
+              <span class="dash-dot"></span>
+              <span>ATS COMMAND — DEMO PREVIEW</span>
+            </div>
+            <div class="dash-grid">
+              <div class="dash-panel">
+                <div class="dash-label">ATS MATCH (DEMO)</div>
+                <div class="dash-score">72<span>/100</span></div>
+                <div class="dash-bar"><span></span></div>
+              </div>
+              <div class="dash-panel">
+                <div class="dash-label">RISK FLAGS (PLACEHOLDER)</div>
+                <ul class="dash-chips">
+                  <li data-i18n="dashRiskDemo1">German level — demo flag</li>
+                  <li data-i18n="dashRiskDemo2">On-call signal — placeholder</li>
+                </ul>
+              </div>
+              <div class="dash-panel">
+                <div class="dash-label">RESUME SOURCE (DEMO)</div>
+                <div class="dash-select-mock" data-i18n="dashResumeDemo">SysAdmin.pdf ▾</div>
+              </div>
+              <div class="dash-panel">
+                <div class="dash-label">APPROVAL GATE</div>
+                <div class="dash-approve-row">
+                  <span class="dash-lock" data-i18n="dashApprovalDemo">Pending human review — demo</span>
+                </div>
+              </div>
+              <div class="dash-panel dash-span-2">
+                <div class="dash-label">TAILORING OUTPUT (PREVIEW)</div>
+                <pre class="dash-pre" data-i18n="dashOutputDemo">• Keyword alignment — placeholder
+• Bullet refinement — demo lines only
+• Final export — awaiting approval step</pre>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </header>
+    </section>
 
-    <section class="card">
+    <section class="card workflow-preview card-enter">
+      <h2 data-i18n="workflowPreviewTitle">Workflow Preview</h2>
+      <p class="section-lead" data-i18n="workflowPreviewLead">Structured stages before any tailoring — demo labels only.</p>
+      <div class="preview-grid">
+        <article class="preview-step">
+          <div class="preview-num">01</div>
+          <h3 data-i18n="wpStep1Title">Resume Selection</h3>
+          <p data-i18n="wpStep1Desc">Choose the best source resume for the role.</p>
+        </article>
+        <article class="preview-step">
+          <div class="preview-num">02</div>
+          <h3 data-i18n="wpStep2Title">ATS Checkup</h3>
+          <p data-i18n="wpStep2Desc">Compare the job description with the current resume.</p>
+        </article>
+        <article class="preview-step">
+          <div class="preview-num">03</div>
+          <h3 data-i18n="wpStep3Title">Hiring Manager Scan</h3>
+          <p data-i18n="wpStep3Desc">Check whether the story makes sense for a real decision-maker.</p>
+        </article>
+        <article class="preview-step">
+          <div class="preview-num">04</div>
+          <h3 data-i18n="wpStep4Title">Tailoring After Approval</h3>
+          <p data-i18n="wpStep4Desc">Generate a tailored version only after human confirmation.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="card risk-signals-block card-enter">
+      <h2 data-i18n="riskSignalsTitle">Risk Signals</h2>
+      <p class="section-lead" data-i18n="riskSignalsLead">Demo badges — not live analysis results.</p>
+      <div class="risk-signals-row">
+        <div class="risk-pill">
+          <span class="risk-pill-label" data-i18n="riskBadge1Label">German level</span>
+          <span class="risk-pill-sub" data-i18n="riskBadge1Sub">Placeholder · language gate</span>
+        </div>
+        <div class="risk-pill">
+          <span class="risk-pill-label" data-i18n="riskBadge2Label">On-call risk</span>
+          <span class="risk-pill-sub" data-i18n="riskBadge2Sub">Placeholder · schedule signal</span>
+        </div>
+        <div class="risk-pill">
+          <span class="risk-pill-label" data-i18n="riskBadge3Label">Relocation fit</span>
+          <span class="risk-pill-sub" data-i18n="riskBadge3Sub">Placeholder · location friction</span>
+        </div>
+        <div class="risk-pill">
+          <span class="risk-pill-label" data-i18n="riskBadge4Label">Hands-on proof</span>
+          <span class="risk-pill-sub" data-i18n="riskBadge4Sub">Placeholder · evidence depth</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card use-cases-section card-enter" aria-labelledby="use-cases-heading">
+      <h2 id="use-cases-heading" data-i18n="useCasesTitle">Use Cases</h2>
+      <p class="section-lead" data-i18n="useCasesLead">Illustrative scenarios for who benefits from this MVP — not testimonials or client names.</p>
+      <div class="use-cases-grid">
+        <article class="use-case-card">
+          <div class="use-case-head">
+            <span class="use-case-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+              </svg>
+            </span>
+            <span class="use-case-chip" data-i18n="uc1Chip">TRIAGE · DEMO</span>
+          </div>
+          <p class="use-case-label" data-i18n="uc1Label">ATS / PRIORITY</p>
+          <h3 class="use-case-title" data-i18n="uc1Title">Fast Job Fit Check</h3>
+          <p class="use-case-desc" data-i18n="uc1Desc">For quickly checking if a role is worth applying to before spending time on tailoring.</p>
+        </article>
+        <article class="use-case-card">
+          <div class="use-case-head">
+            <span class="use-case-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="6" height="6" rx="1"/>
+                <rect x="15" y="4" width="6" height="6" rx="1"/>
+                <rect x="9" y="14" width="6" height="6" rx="1"/>
+                <path d="M6 10v3h3M18 10v3h-3M12 10v4"/>
+              </svg>
+            </span>
+            <span class="use-case-chip" data-i18n="uc2Chip">PIPELINE · DEMO</span>
+          </div>
+          <p class="use-case-label" data-i18n="uc2Label">WORKFLOW / STAGES</p>
+          <h3 class="use-case-title" data-i18n="uc2Title">Resume Tailoring Workflow</h3>
+          <p class="use-case-desc" data-i18n="uc2Desc">For creating a structured resume version after ATS and hiring manager logic are reviewed.</p>
+        </article>
+        <article class="use-case-card">
+          <div class="use-case-head">
+            <span class="use-case-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 21s7-4.35 7-10a7 7 0 1 0-14 0c0 5.65 7 10 7 10z"/>
+                <circle cx="12" cy="11" r="2.5"/>
+              </svg>
+            </span>
+            <span class="use-case-chip" data-i18n="uc3Chip">RISK MAP · DEMO</span>
+          </div>
+          <p class="use-case-label" data-i18n="uc3Label">GERMANY / RELOCATION</p>
+          <h3 class="use-case-title" data-i18n="uc3Title">Relocation Job Search</h3>
+          <p class="use-case-desc" data-i18n="uc3Desc">For candidates who need clear proof, risk control, and focused applications for Germany-based roles.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="card card-enter" id="workflow-section">
       <h2 data-i18n="workflowTitle">Workflow Progress</h2>
       <div class="workflow-steps">
         <div id="step0" class="step-card active">
@@ -466,8 +1511,7 @@
       </div>
     </section>
 
-    <section class="card">
-      <h2 data-i18n="inputSectionTitle">Input Section</h2>
+    <section class="card card-enter" id="input-section">
       <div class="grid">
         <div class="field col-4">
           <label for="roleName" data-i18n="roleName">Role name</label>
@@ -520,7 +1564,7 @@
       </div>
 
       <div class="action-row">
-        <label style="display:flex;align-items:center;gap:8px;">
+        <label class="field-check" for="allowSecondary">
           <input id="allowSecondary" type="checkbox">
           <span data-i18n="allowSecondary">Allow limited enhancement from secondary resume</span>
         </label>
@@ -533,7 +1577,7 @@
       <div class="mini-note" data-i18n="truthRuleNote">Human approval is required before tailoring. Do not invent experience or skills that cannot be defended in an interview.</div>
     </section>
 
-    <section class="card">
+    <section class="card card-enter">
       <h2 data-i18n="stage0Title">Stage 0: Resume Selection</h2>
       <div id="stage0Output" class="output" data-i18n="stage0Empty">No analysis yet.</div>
       <div class="action-row">
@@ -541,7 +1585,7 @@
       </div>
     </section>
 
-    <section class="card">
+    <section class="card card-enter" id="stage1-section">
       <h2 data-i18n="stage1Title">Stage 1: Checkup Only</h2>
       <div id="stage1Output" class="output" data-i18n="stage1Empty">Stage 1 output will appear here.</div>
       <div class="pill-row" id="stage1Badges"></div>
@@ -556,7 +1600,7 @@
       </div>
     </section>
 
-    <section class="card">
+    <section class="card card-enter">
       <h2 data-i18n="stage15Title">Stage 1.5: Hiring Manager Scan</h2>
       <div id="stage15Output" class="output" data-i18n="stage15Empty">Stage 1.5 output will appear here.</div>
       <div id="riskFlags" class="risk-grid"></div>
@@ -566,7 +1610,7 @@
       </div>
     </section>
 
-    <section class="card">
+    <section class="card card-enter">
       <h2 data-i18n="stage2Title">Stage 2: Tailoring (Approval Required)</h2>
       <div id="stage2Locked" class="locked">
         <div class="lock-row">
@@ -579,7 +1623,7 @@
       <div id="stage2Reminder" class="danger-note" style="display:none;" data-i18n="stage2Reminder">Review before sending. Do not claim skills you cannot defend in an interview.</div>
     </section>
 
-    <section class="card">
+    <section class="card card-enter">
       <h2 data-i18n="promptBuilderTitle">Resume ATS Prompt Builder</h2>
       <div class="prompt-layout">
         <div class="prompt-side">
@@ -621,6 +1665,49 @@
         badgeGermany: "Germany Job Search",
         badgeApproval: "Human Approval Required",
         badgeTruth: "Truthful Resume Rule",
+        heroEyebrow: "AI Resume Adapter / ATS Checkup / Human-in-the-loop Tailoring",
+        heroSubtitle: "Paste a job description, run a structured checkup, detect risks, and prepare a focused resume version only after approval.",
+        heroCtaAts: "Run ATS Checkup",
+        heroCtaWorkflow: "Open Workflow",
+        workflowPreviewTitle: "Workflow Preview",
+        workflowPreviewLead: "Structured stages before any tailoring — demo labels only.",
+        wpStep1Title: "Resume Selection",
+        wpStep1Desc: "Choose the best source resume for the role.",
+        wpStep2Title: "ATS Checkup",
+        wpStep2Desc: "Compare the job description with the current resume.",
+        wpStep3Title: "Hiring Manager Scan",
+        wpStep3Desc: "Check whether the story makes sense for a real decision-maker.",
+        wpStep4Title: "Tailoring After Approval",
+        wpStep4Desc: "Generate a tailored version only after human confirmation.",
+        riskSignalsTitle: "Risk Signals",
+        riskSignalsLead: "Demo badges — not live analysis results.",
+        riskBadge1Label: "German level",
+        riskBadge1Sub: "Placeholder · language gate",
+        riskBadge2Label: "On-call risk",
+        riskBadge2Sub: "Placeholder · schedule signal",
+        riskBadge3Label: "Relocation fit",
+        riskBadge3Sub: "Placeholder · location friction",
+        riskBadge4Label: "Hands-on proof",
+        riskBadge4Sub: "Placeholder · evidence depth",
+        useCasesTitle: "Use Cases",
+        useCasesLead: "Illustrative scenarios for who benefits from this MVP — not testimonials or client names.",
+        uc1Chip: "TRIAGE · DEMO",
+        uc1Label: "ATS / PRIORITY",
+        uc1Title: "Fast Job Fit Check",
+        uc1Desc: "For quickly checking if a role is worth applying to before spending time on tailoring.",
+        uc2Chip: "PIPELINE · DEMO",
+        uc2Label: "WORKFLOW / STAGES",
+        uc2Title: "Resume Tailoring Workflow",
+        uc2Desc: "For creating a structured resume version after ATS and hiring manager logic are reviewed.",
+        uc3Chip: "RISK MAP · DEMO",
+        uc3Label: "GERMANY / RELOCATION",
+        uc3Title: "Relocation Job Search",
+        uc3Desc: "For candidates who need clear proof, risk control, and focused applications for Germany-based roles.",
+        dashRiskDemo1: "German level — demo flag",
+        dashRiskDemo2: "On-call signal — placeholder",
+        dashResumeDemo: "SysAdmin.pdf ▾",
+        dashApprovalDemo: "Pending human review — demo",
+        dashOutputDemo: "• Keyword alignment — placeholder\n• Bullet refinement — demo lines only\n• Final export — awaiting approval step",
         workflowTitle: "Workflow Progress",
         stepStateReady: "Ready",
         stepStatePending: "Pending",
@@ -686,6 +1773,49 @@
         badgeGermany: "Поиск работы в Германии",
         badgeApproval: "Требуется одобрение человека",
         badgeTruth: "Правило правдивого резюме",
+        heroEyebrow: "AI Resume Adapter / ATS-проверка / Адаптация с участием человека",
+        heroSubtitle: "Вставьте описание вакансии, запустите структурированную проверку, выявите риски и подготовьте версию резюме только после одобрения.",
+        heroCtaAts: "Запустить ATS Checkup",
+        heroCtaWorkflow: "Открыть workflow",
+        workflowPreviewTitle: "Предпросмотр workflow",
+        workflowPreviewLead: "Этапы перед любой адаптацией — только демо-подписи.",
+        wpStep1Title: "Выбор резюме",
+        wpStep1Desc: "Выберите лучшее исходное резюме под роль.",
+        wpStep2Title: "ATS-проверка",
+        wpStep2Desc: "Сравните описание вакансии с текущим резюме.",
+        wpStep3Title: "Скан Hiring Manager",
+        wpStep3Desc: "Проверьте, насколько история убедительна для решения hiring manager.",
+        wpStep4Title: "Адаптация после одобрения",
+        wpStep4Desc: "Генерируйте версию только после подтверждения человеком.",
+        riskSignalsTitle: "Сигналы риска",
+        riskSignalsLead: "Демо-бейджи — не результаты живого анализа.",
+        riskBadge1Label: "Немецкий",
+        riskBadge1Sub: "Плейсхолдер · языковой порог",
+        riskBadge2Label: "Риск дежурств",
+        riskBadge2Sub: "Плейсхолдер · график",
+        riskBadge3Label: "Релокация",
+        riskBadge3Sub: "Плейсхолдер · география",
+        riskBadge4Label: "Hands-on доказательства",
+        riskBadge4Sub: "Плейсхолдер · глубина опыта",
+        useCasesTitle: "Сценарии использования",
+        useCasesLead: "Иллюстративные сценарии, кому полезен этот MVP — не отзывы и не имена клиентов.",
+        uc1Chip: "ТРИАЖ · ДЕМО",
+        uc1Label: "ATS / ПРИОРИТЕТ",
+        uc1Title: "Быстрая проверка fit",
+        uc1Desc: "Чтобы быстро понять, стоит ли тратить время на отклик, до глубокой адаптации резюме.",
+        uc2Chip: "ПАЙПЛАЙН · ДЕМО",
+        uc2Label: "WORKFLOW / ЭТАПЫ",
+        uc2Title: "Процесс адаптации резюме",
+        uc2Desc: "Чтобы собрать структурированную версию резюме после ATS и логики hiring manager.",
+        uc3Chip: "РИСК-КАРТА · ДЕМО",
+        uc3Label: "ГЕРМАНИЯ / РЕЛОКАЦИЯ",
+        uc3Title: "Поиск работы с релокацией",
+        uc3Desc: "Для кандидатов, которым нужны явные доказательства fit, контроль рисков и точечные отклики на роли в Германии.",
+        dashRiskDemo1: "Уровень немецкого — демо-флаг",
+        dashRiskDemo2: "Сигнал дежурств — плейсхолдер",
+        dashResumeDemo: "SysAdmin.pdf ▾",
+        dashApprovalDemo: "Ожидает проверки человеком — демо",
+        dashOutputDemo: "• Согласование ключевых слов — плейсхолдер\n• Уточнение буллетов — только демо-строки\n• Финальный экспорт — после шага одобрения",
         workflowTitle: "Прогресс этапов",
         stepStateReady: "Готово",
         stepStatePending: "Ожидает",
