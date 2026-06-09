@@ -1,7 +1,7 @@
 # AI Resume Adapter Bot — Visual Design Skill
 
 ## Direction
-**ATS Command Center**: dark recruiter / cyber dashboard. Confident, professional, technological. Avoid generic purple gradients and default “tool UI” aesthetics.
+**ATS Command Center**: dark ATS / cyber dashboard. Confident, professional, technological. Avoid generic purple gradients and default “tool UI” aesthetics.
 
 ## Tokens (CSS variables)
 - **Background**: graphite / near-black (`--bg-base`).
